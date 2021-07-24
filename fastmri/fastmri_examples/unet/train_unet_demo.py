@@ -15,6 +15,8 @@ from fastmri.data.subsample import create_mask_for_mask_type
 from fastmri.data.transforms import UnetDataTransform
 from fastmri.pl_modules import FastMriDataModule, UnetModule
 
+import torch
+
 
 def cli_main(args):
     pl.seed_everything(args.seed)
@@ -81,9 +83,9 @@ def build_args():
 
     # basic args
     path_config = pathlib.Path("../../fastmri_dirs.yaml")
-    num_gpus = 2
+    num_gpus = 1
     backend = "ddp"
-    batch_size = 1 if backend == "ddp" else num_gpus
+    batch_size = 16 if backend == "ddp" else num_gpus
 
     # set defaults based on optional directory config
     data_path = fetch_dir("knee_path", path_config)
@@ -159,12 +161,11 @@ def build_args():
         checkpoint_dir.mkdir(parents=True)
 
     args.checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        filepath=args.default_root_dir / "checkpoints",
+        dirpath=args.default_root_dir / "checkpoints",
         save_top_k=True,
         verbose=True,
         monitor="validation_loss",
         mode="min",
-        prefix="",
     )
 
     # set default checkpoint if one exists in our checkpoint directory

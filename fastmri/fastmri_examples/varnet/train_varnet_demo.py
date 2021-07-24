@@ -82,7 +82,7 @@ def build_args():
     # basic args
     path_config = pathlib.Path("../../fastmri_dirs.yaml")
     backend = "ddp"
-    num_gpus = 2 if backend == "ddp" else 1
+    num_gpus = 1 if backend == "ddp" else 1
     batch_size = 1
 
     # set defaults based on optional directory config
@@ -165,12 +165,11 @@ def build_args():
         checkpoint_dir.mkdir(parents=True)
 
     args.checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        filepath=args.default_root_dir / "checkpoints",
+        dirpath=args.default_root_dir / "checkpoints",
         save_top_k=True,
         verbose=True,
         monitor="validation_loss",
         mode="min",
-        prefix="",
     )
 
     # set default checkpoint if one exists in our checkpoint directory
