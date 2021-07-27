@@ -13,13 +13,13 @@ def conv_layer(input_data, conv_filter, is_relu=False, is_scaling=False):
 
     """
 
-    W = tf.get_variable('W', shape=conv_filter, initializer=tf.random_normal_initializer(0, 0.05))
+    W = tf.compat.v1.get_variable('W', shape=conv_filter, initializer=tf.random_normal_initializer(0, 0.05))
     x = tf.nn.conv2d(input_data, W, strides=[1, 1, 1, 1], padding='SAME')
 
-    if (is_relu):
+    if is_relu:
         x = tf.nn.relu(x)
 
-    if (is_scaling):
+    if is_scaling:
         scalar = tf.constant(0.1, dtype=tf.float32)
         x = tf.multiply(scalar, x)
 
@@ -46,20 +46,20 @@ def ResNet(input_data, nb_res_blocks):
     conv_filters = dict([('w1', (3, 3, 2, 64)), ('w2', (3, 3, 64, 64)), ('w3', (3, 3, 64, 2))])
     intermediate_outputs = {}
 
-    with tf.variable_scope('FirstLayer'):
+    with tf.compat.v1.variable_scope('FirstLayer'):
         intermediate_outputs['layer0'] = conv_layer(input_data, conv_filters['w1'], is_relu=False, is_scaling=False)
 
     for i in np.arange(1, nb_res_blocks + 1):
-        with tf.variable_scope('ResBlock' + str(i)):
+        with tf.compat.v1.variable_scope('ResBlock' + str(i)):
             conv_layer1 = conv_layer(intermediate_outputs['layer' + str(i - 1)], conv_filters['w2'], is_relu=True, is_scaling=False)
             conv_layer2 = conv_layer(conv_layer1, conv_filters['w2'], is_relu=False, is_scaling=True)
 
             intermediate_outputs['layer' + str(i)] = conv_layer2 + intermediate_outputs['layer' + str(i - 1)]
 
-    with tf.variable_scope('LastLayer'):
+    with tf.compat.v1.variable_scope('LastLayer'):
         rb_output = conv_layer(intermediate_outputs['layer' + str(i)], conv_filters['w2'], is_relu=False, is_scaling=False)
 
-    with tf.variable_scope('Residual'):
+    with tf.compat.v1.variable_scope('Residual'):
         temp_output = rb_output + intermediate_outputs['layer0']
         nw_output = conv_layer(temp_output, conv_filters['w3'], is_relu=False, is_scaling=False)
 
@@ -71,7 +71,7 @@ def mu_param():
     Penalty parameter used in DC units, x = (E^h E + \mu I)^-1 (E^h y + \mu * z)
     """
 
-    with tf.variable_scope(tf.get_variable_scope(), reuse=tf.AUTO_REUSE):
-        mu = tf.get_variable(name='mu', dtype=tf.float32, initializer=.05)
+    with tf.compat.v1.variable_scope(tf.compat.v1.get_variable_scope(), reuse=tf.compat.v1.AUTO_REUSE):
+        mu = tf.compat.v1.get_variable(name='mu', dtype=tf.float32, initializer=.05)
 
     return mu

@@ -1,5 +1,6 @@
 import numpy as np
-import utils
+from SSDU import utils
+from tqdm import tqdm
 
 
 class ssdu_masks():
@@ -51,7 +52,7 @@ class ssdu_masks():
             indx = np.int(np.round(np.random.normal(loc=center_kx, scale=(nrow - 1) / std_scale)))
             indy = np.int(np.round(np.random.normal(loc=center_ky, scale=(ncol - 1) / std_scale)))
 
-            if (0 <= indx < nrow and 0 <= indy < ncol and temp_mask[indx, indy] == 1 and loss_mask[indx, indy] != 1):
+            if 0 <= indx < nrow and 0 <= indy < ncol and temp_mask[indx, indy] == 1 and loss_mask[indx, indy] != 1:
                 loss_mask[indx, indy] = 1
                 count = count + 1
 

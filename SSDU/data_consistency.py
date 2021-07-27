@@ -19,7 +19,7 @@ class data_consistency():
             self.sens_maps = sens_maps
             self.mask = mask
             self.shape_list = tf.shape(mask)
-            self.scalar = tf.complex(tf.sqrt(tf.to_float(self.shape_list[0] * self.shape_list[1])), 0.)
+            self.scalar = tf.complex(tf.sqrt(tf.compat.v1.to_float(self.shape_list[0] * self.shape_list[1])), 0.)
 
     def EhE_Op(self, img, mu):
         """
@@ -27,10 +27,10 @@ class data_consistency():
         """
         with tf.name_scope('EhE'):
             coil_imgs = self.sens_maps * img
-            kspace = tf_utils.tf_fftshift(tf.fft2d(tf_utils.tf_ifftshift(coil_imgs))) / self.scalar
+            kspace = tf_utils.tf_fftshift(tf.signal.fft2d(tf_utils.tf_ifftshift(coil_imgs))) / self.scalar
             masked_kspace = kspace * self.mask
-            image_space_coil_imgs = tf_utils.tf_ifftshift(tf.ifft2d(tf_utils.tf_fftshift(masked_kspace))) * self.scalar
-            image_space_comb = tf.reduce_sum(image_space_coil_imgs * tf.conj(self.sens_maps), axis=0)
+            image_space_coil_imgs = tf_utils.tf_ifftshift(tf.signal.ifft2d(tf_utils.tf_fftshift(masked_kspace))) * self.scalar
+            image_space_comb = tf.reduce_sum(image_space_coil_imgs * tf.math.conj(self.sens_maps), axis=0)
 
             ispace = image_space_comb + mu * img
 
@@ -44,7 +44,7 @@ class data_consistency():
 
         with tf.name_scope('SSDU_kspace'):
             coil_imgs = self.sens_maps * img
-            kspace = tf_utils.tf_fftshift(tf.fft2d(tf_utils.tf_ifftshift(coil_imgs))) / self.scalar
+            kspace = tf_utils.tf_fftshift(tf.signal.fft2d(tf_utils.tf_ifftshift(coil_imgs))) / self.scalar
             masked_kspace = kspace * self.mask
 
         return masked_kspace
@@ -56,7 +56,7 @@ class data_consistency():
 
         with tf.name_scope('Supervised_kspace'):
             coil_imgs = self.sens_maps * img
-            kspace = tf_utils.tf_fftshift(tf.fft2d(tf_utils.tf_ifftshift(coil_imgs))) / self.scalar
+            kspace = tf_utils.tf_fftshift(tf.signal.fft2d(tf_utils.tf_ifftshift(coil_imgs))) / self.scalar
 
         return kspace
 
@@ -89,10 +89,10 @@ def conj_grad(input_elems, mu_param):
     def body(i, rsold, x, r, p, mu):
         with tf.name_scope('CGIters'):
             Ap = Encoder.EhE_Op(p, mu)
-            alpha = tf.complex(rsold / tf.to_float(tf.reduce_sum(tf.conj(p) * Ap)), 0.)
+            alpha = tf.complex(rsold / tf.compat.v1.to_float(tf.reduce_sum(tf.math.conj(p) * Ap)), 0.)
             x = x + alpha * p
             r = r - alpha * Ap
-            rsnew = tf.to_float(tf.reduce_sum(tf.conj(r) * r))
+            rsnew = tf.compat.v1.to_float(tf.reduce_sum(tf.math.conj(r) * r))
             beta = rsnew / rsold
             beta = tf.complex(beta, 0.)
             p = r + beta * p
@@ -101,7 +101,7 @@ def conj_grad(input_elems, mu_param):
 
     x = tf.zeros_like(rhs)
     i, r, p = 0, rhs, rhs
-    rsold = tf.to_float(tf.reduce_sum(tf.conj(r) * r), )
+    rsold = tf.compat.v1.to_float(tf.reduce_sum(tf.math.conj(r) * r), )
     loop_vars = i, rsold, x, r, p, mu_param
     cg_out = tf.while_loop(cond, body, loop_vars, name='CGloop', parallel_iterations=1)[2]
 

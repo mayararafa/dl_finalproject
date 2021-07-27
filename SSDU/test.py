@@ -15,8 +15,10 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 os.environ["HDF5_USE_FILE_LOCKING"] = "FALSE"
 
 # .......................Load the Data...........................................
+args.data_opt = "Coronal_PD"
 print('\n Loading ' + args.data_opt + ' test dataset...')
 kspace_dir, coil_dir, mask_dir, saved_model_dir = utils.get_test_directory(args)
+exit()
 
 # %% kspace and sensitivity maps are assumed to be in .h5 format and mask is assumed to be in .mat
 # Users can change these formats based on their dataset
@@ -34,9 +36,9 @@ test_mask = np.complex64(np.tile(original_mask[np.newaxis, :, :], (nSlices, 1, 1
 
 print('\n size of kspace: ', kspace_test.shape, ', maps: ', sens_maps_testAll.shape, ', mask: ', test_mask.shape)
 
-# %%  zeropadded outer edges of k-space with no signal- check github readme file for explanation for further explanations
-# for coronal PD dataset, first 17 and last 16 columns of k-space has no signal
-# in the training mask we set corresponding columns as 1 to ensure data consistency
+# %%  zero-padded outer edges of k-space with no signal- check github readme file for explanation for further
+# explanations for coronal PD dataset, first 17 and last 16 columns of k-space has no signal in the training mask we
+# set corresponding columns as 1 to ensure data consistency
 if args.data_opt == 'Coronal_PD':
     test_mask[:, :, 0:17] = np.ones((nSlices, args.nrow_GLOB, 17))
     test_mask[:, :, 352:args.ncol_GLOB] = np.ones((nSlices, args.nrow_GLOB, 16))
@@ -54,17 +56,17 @@ sens_maps_testAll = np.transpose(sens_maps_testAll, (0, 3, 1, 2))
 all_ref_slices, all_input_slices, all_recon_slices = [], [], []
 
 print('\n  loading the saved model ...')
-tf.reset_default_graph()
+tf.compat.v1.reset_default_graph()
 loadChkPoint = tf.train.latest_checkpoint(saved_model_dir)
-config = tf.ConfigProto()
+config = tf.compat.v1.ConfigProto()
 config.gpu_options.allow_growth = True
 
-with tf.Session(config=config) as sess:
-    new_saver = tf.train.import_meta_graph(saved_model_dir + '/model_test.meta')
+with tf.compat.v1.Session(config=config) as sess:
+    new_saver = tf.compat.v1.train.import_meta_graph(saved_model_dir + '/model_test.meta')
     new_saver.restore(sess, loadChkPoint)
 
     # ..................................................................................................................
-    graph = tf.get_default_graph()
+    graph = tf.compat.v1.get_default_graph()
     nw_output = graph.get_tensor_by_name('nw_output:0')
     nw_kspace_output = graph.get_tensor_by_name('nw_kspace_output:0')
     mu_param = graph.get_tensor_by_name('mu:0')
@@ -76,7 +78,7 @@ with tf.Session(config=config) as sess:
     loss_maskP = graph.get_tensor_by_name('loss_mask:0')
     nw_inputP = graph.get_tensor_by_name('nw_input:0')
     sens_mapsP = graph.get_tensor_by_name('sens_maps:0')
-    weights = sess.run(tf.global_variables())
+    weights = sess.run(tf.compat.v1.global_variables())
 
     for ii in range(nSlices):
 

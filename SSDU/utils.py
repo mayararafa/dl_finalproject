@@ -1,5 +1,9 @@
 import numpy as np
-from skimage.measure import compare_ssim
+import os
+from skimage.metrics import structural_similarity
+
+
+DATA_DIR = "../fastmri_data/knee"
 
 
 def get_train_directory(args):
@@ -16,7 +20,7 @@ def get_train_directory(args):
 
     if args.data_opt == 'Coronal_PD':
 
-        kspace_dir = '...'
+        kspace_dir = os.path.join(DATA_DIR, "singlecoil_train/file1001061.h5")
         coil_dir = '...'
 
     elif args.data_opt == 'Coronal_PDFS':
@@ -48,9 +52,9 @@ def get_test_directory(args):
     """
     if args.data_opt == 'Coronal_PD':
 
-        kspace_dir = '...'
+        kspace_dir = os.path.join(DATA_DIR, "singlecoil_test")
         coil_dir = '...'
-        saved_model_dir = '../SSDU_Coronal_PD_100Epochs_Rate4_10Unrolls_GaussianSelection'
+        saved_model_dir = 'saved_models/SSDU_Coronal_PD_100Epochs_Rate4_10Unrolls_GaussianSelection'
 
     elif args.data_opt == 'Coronal_PDFS':
 
@@ -80,9 +84,9 @@ def getSSIM(space_ref, space_rec):
     space_rec = space_rec / np.amax(np.abs(space_ref))
     data_range = np.amax(np.abs(space_ref)) - np.amin(np.abs(space_ref))
 
-    return compare_ssim(space_rec, space_ref, data_range=data_range,
-                        gaussian_weights=True,
-                        use_sample_covariance=False)
+    return structural_similarity(space_rec, space_ref, data_range=data_range,
+                                 gaussian_weights=True,
+                                 use_sample_covariance=False)
 
 
 def getPSNR(ref, recon):
