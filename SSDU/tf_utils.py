@@ -13,12 +13,12 @@ def test_graph(directory):
     This function creates a test graph for testing
     """
 
-    tf.reset_default_graph()
+    tf.compat.v1.reset_default_graph()
     # %% placeholders for the unrolled network
-    sens_mapsP = tf.placeholder(tf.complex64, shape=(None, args.ncoil_GLOB, args.nrow_GLOB, args.ncol_GLOB), name='sens_maps')
-    trn_maskP = tf.placeholder(tf.complex64, shape=(None, args.nrow_GLOB, args.ncol_GLOB), name='trn_mask')
-    loss_maskP = tf.placeholder(tf.complex64, shape=(None, args.nrow_GLOB, args.ncol_GLOB), name='loss_mask')
-    nw_inputP = tf.placeholder(tf.float32, shape=(None, args.nrow_GLOB, args.ncol_GLOB, 2), name='nw_input')
+    sens_mapsP = tf.compat.v1.placeholder(tf.complex64, shape=(None, args.ncoil_GLOB, args.nrow_GLOB, args.ncol_GLOB), name='sens_maps')
+    trn_maskP = tf.compat.v1.placeholder(tf.complex64, shape=(None, args.nrow_GLOB, args.ncol_GLOB), name='trn_mask')
+    loss_maskP = tf.compat.v1.placeholder(tf.complex64, shape=(None, args.nrow_GLOB, args.ncol_GLOB), name='loss_mask')
+    nw_inputP = tf.compat.v1.placeholder(tf.float32, shape=(None, args.nrow_GLOB, args.ncol_GLOB, 2), name='nw_input')
 
     nw_output, nw_kspace_output, x0, all_intermediate_outputs, mu = \
                UnrollNet.UnrolledNet(nw_inputP, sens_mapsP, trn_maskP, loss_maskP).model
@@ -31,10 +31,10 @@ def test_graph(directory):
     mu = tf.identity(mu, name='mu')
 
     # %% saves computational graph for test
-    saver = tf.train.Saver()
+    saver = tf.compat.v1.train.Saver()
     sess_test_filename = os.path.join(directory, 'model_test')
-    with tf.Session(config=tf.ConfigProto()) as sess:
-        sess.run(tf.global_variables_initializer())
+    with tf.compat.v1.Session(config=tf.compat.v1.ConfigProto()) as sess:
+        sess.run(tf.compat.v1.global_variables_initializer())
         saved_test_model = saver.save(sess, sess_test_filename, latest_filename='checkpoint_test')
 
     print('\n Test graph is generated and saved at: ' + saved_test_model)
@@ -54,7 +54,7 @@ def tf_complex2real(input_data):
 
     """
 
-    return tf.stack([tf.real(input_data), tf.imag(input_data)], axis=-1)
+    return tf.stack([tf.compat.v1.real(input_data), tf.compat.v1.imag(input_data)], axis=-1)
 
 
 def tf_real2complex(input_data):

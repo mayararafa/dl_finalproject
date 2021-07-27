@@ -1,4 +1,0 @@
-curl -C - "https://fastmri-dataset.s3.amazonaws.com/knee_singlecoil_train.tar.gz?AWSAccessKeyId=AKIAJM2LEZ67Y2JL3KRA&Signature=RVwEFIIdegMj6c%2BBe4yCwP%2FCzlk%3D&Expires=1634098906" --output knee_singlecoil_train.tar.gz
-curl -C - "https://fastmri-dataset.s3.amazonaws.com/knee_singlecoil_val.tar.gz?AWSAccessKeyId=AKIAJM2LEZ67Y2JL3KRA&Signature=uoGkjg4jG4jgM%2BK22ZyiFTofm2E%3D&Expires=1634098906" --output knee_singlecoil_val.tar.gz
-curl -C - "https://fastmri-dataset.s3.amazonaws.com/knee_singlecoil_test_v2.tar.gz?AWSAccessKeyId=AKIAJM2LEZ67Y2JL3KRA&Signature=DH10JWj9kADQEKi%2BgrwRihfmlM0%3D&Expires=1634098906" --output knee_singlecoil_test_v2.tar.gz
-curl -C - "https://fastmri-dataset.s3.amazonaws.com/knee_singlecoil_challenge.tar.gz?AWSAccessKeyId=AKIAJM2LEZ67Y2JL3KRA&Signature=ekrndep0rDe04UyEiUunkbjItLM%3D&Expires=1634098906" --output knee_singlecoil_challenge.tar.gz

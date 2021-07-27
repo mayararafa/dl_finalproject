@@ -8,7 +8,7 @@ parser = parser_ops.get_parser()
 args = parser.parse_args()
 
 
-class UnrolledNet():
+class UnrolledNet:
     """
 
     Parameters
@@ -50,7 +50,7 @@ class UnrolledNet():
         x0 = ssdu_dc.dc_block(self.input_x, self.sens_maps, self.trn_mask, mu_init)
 
         with tf.name_scope('SSDUModel'):
-            with tf.variable_scope('Weights', reuse=tf.AUTO_REUSE):
+            with tf.compat.v1.variable_scope('Weights', reuse=tf.compat.v1.AUTO_REUSE):
                 for i in range(args.nb_unroll_blocks):
                     x = networks.ResNet(x, args.nb_res_blocks)
                     denoiser_output = x

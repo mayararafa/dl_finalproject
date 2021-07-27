@@ -9,6 +9,9 @@ import os
 import pathlib
 from argparse import ArgumentParser
 
+import sys
+sys.path.append(os.getcwd())
+
 import pytorch_lightning as pl
 from fastmri.data.mri_data import fetch_dir
 from fastmri.data.subsample import create_mask_for_mask_type
@@ -80,8 +83,8 @@ def build_args():
     parser = ArgumentParser()
 
     # basic args
-    path_config = pathlib.Path("../../fastmri_dirs.yaml")
-    num_gpus = 2
+    path_config = pathlib.Path("fastmri_dirs.yaml")
+    num_gpus = 1
     backend = "ddp"
     batch_size = 1 if backend == "ddp" else num_gpus
 
@@ -102,7 +105,7 @@ def build_args():
     parser.add_argument(
         "--mask_type",
         choices=("random", "equispaced"),
-        default="random",
+        default="equispaced",
         type=str,
         help="Type of k-space mask",
     )
@@ -159,12 +162,11 @@ def build_args():
         checkpoint_dir.mkdir(parents=True)
 
     args.checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        filepath=args.default_root_dir / "checkpoints",
+        dirpath=args.default_root_dir / "checkpoints",
         save_top_k=True,
         verbose=True,
         monitor="validation_loss",
         mode="min",
-        prefix="",
     )
 
     # set default checkpoint if one exists in our checkpoint directory

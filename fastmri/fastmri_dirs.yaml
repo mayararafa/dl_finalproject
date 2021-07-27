@@ -1,0 +1,3 @@
+brain_path: /path/to/brain
+knee_path: /home/mayararafa/dl_finalproject/fastmri_data/knee
+log_path: ./logs

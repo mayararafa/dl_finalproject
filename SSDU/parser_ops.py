@@ -23,12 +23,16 @@ def get_parser():
     # %% hyperparameters for the dataset
     parser.add_argument('--data_opt', type=str, default='Coronal_PD',
                         help=' directories for the kspace, sensitivity maps and mask')
-    parser.add_argument('--nrow_GLOB', type=int, default=320,
+    parser.add_argument('--nrow_GLOB', type=int, default=640,
                         help='number of rows of the slices in the dataset')
     parser.add_argument('--ncol_GLOB', type=int, default=368,
                         help='number of columns of the slices in the dataset')
-    parser.add_argument('--ncoil_GLOB', type=int, default=15,
+    parser.add_argument('--ncoil_GLOB', type=int, default=1,
                         help='number of coils of the slices in the dataset')
+    parser.add_argument('--subsample_mask_type', type=str, default='equispaced',
+                        help='Type of k-space subsampling mask', choices=['random', 'equispaced'])
+    parser.add_argument('--center_fractions', type=float, default=[0.08],
+                        help='Number of center lines to use in subsampling mask')
 
     # %% hyperparameters for the SSDU
     parser.add_argument('--mask_type', type=str, default='Gaussian',
