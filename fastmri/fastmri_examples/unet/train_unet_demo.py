@@ -9,13 +9,14 @@ import os
 import pathlib
 from argparse import ArgumentParser
 
+import sys
+sys.path.append(os.getcwd())
+
 import pytorch_lightning as pl
 from fastmri.data.mri_data import fetch_dir
 from fastmri.data.subsample import create_mask_for_mask_type
 from fastmri.data.transforms import UnetDataTransform
 from fastmri.pl_modules import FastMriDataModule, UnetModule
-
-import torch
 
 
 def cli_main(args):
@@ -82,10 +83,10 @@ def build_args():
     parser = ArgumentParser()
 
     # basic args
-    path_config = pathlib.Path("../../fastmri_dirs.yaml")
+    path_config = pathlib.Path("fastmri_dirs.yaml")
     num_gpus = 1
     backend = "ddp"
-    batch_size = 16 if backend == "ddp" else num_gpus
+    batch_size = 1 if backend == "ddp" else num_gpus
 
     # set defaults based on optional directory config
     data_path = fetch_dir("knee_path", path_config)
@@ -104,7 +105,7 @@ def build_args():
     parser.add_argument(
         "--mask_type",
         choices=("random", "equispaced"),
-        default="random",
+        default="equispaced",
         type=str,
         help="Type of k-space mask",
     )
