@@ -18,7 +18,6 @@ os.environ["HDF5_USE_FILE_LOCKING"] = "FALSE"
 args.data_opt = "Coronal_PD"
 print('\n Loading ' + args.data_opt + ' test dataset...')
 kspace_dir, coil_dir, mask_dir, saved_model_dir = utils.get_test_directory(args)
-exit()
 
 # %% kspace and sensitivity maps are assumed to be in .h5 format and mask is assumed to be in .mat
 # Users can change these formats based on their dataset
