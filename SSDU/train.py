@@ -10,9 +10,9 @@ import tf_utils
 import parser_ops
 import masks.ssdu_masks as ssdu_masks
 from masks.subsample import create_mask_for_mask_type
-from sens_map_gen.espirit import espirit
+# from sens_map_gen.espirit import espirit
+from sens_map_gen.bart_espirit import espirit
 import UnrollNet
-from tqdm import tqdm
 
 
 parser = parser_ops.get_parser()
@@ -43,26 +43,27 @@ config.allow_soft_placement = True
 print('\n Loading ', args.data_opt, ' data, acc rate : ', args.acc_rate, ', mask type :', args.mask_type)
 kspace_dir, coil_dir, mask_dir = utils.get_train_directory(args)
 
-# %% kspace and sensitivity maps are assumed to be in .h5 format and mask is assumed to be in .mat
-# Users can change these formats based on their dataset
-kspace_train = h5.File(kspace_dir, "r")['kspace'][:]
-if len(kspace_train.shape) == 4:
-    # multi-coil case
-    # TODO: Need to verify input shape aligns with espirit
-    sens_maps = espirit(kspace_train, 6, 24, 0.02, 0.95)
-else:
-    # single-coil case, no need for sensitivity maps, resize to include num_coils=1
-    kspace_train = np.resize(kspace_train, (kspace_train.shape[0],) + (args.nrow_GLOB, args.ncol_GLOB, 1))
-    sens_maps = np.ones(kspace_train.shape)
+# Read in data
+# fastMRI data -> (num_slices, num_coils, h, w)
+kspace_train = h5.File(kspace_dir, "r")['kspace'][:1, :]
+if args.challenge == "singlecoil":
+    kspace_train = np.resize(kspace_train, (kspace_train.shape[0],) + (1,) + kspace_train.shape[1:])
+# Reshaped to (num_slices, h, w, num_coils)
+kspace_train = np.transpose(kspace_train, (0, 2, 3, 1))
+
+print("\nGenerating sensitivity maps - num_slices={} ...".format(kspace_train.shape[0]))
+sens_maps = espirit(args, kspace_train, 6, 24, 0.02, 0.95)
+
 original_mask_func = create_mask_for_mask_type(args.subsample_mask_type, args.center_fractions, [args.acc_rate])
-original_mask = original_mask_func(kspace_train.shape[-3:-1], seed=42)
+original_mask = original_mask_func(kspace_train.shape[-3:-1], seed=42)  # (h, w)
 
 print('\n Normalize the kspace to 0-1 region')
 for ii in range(np.shape(kspace_train)[0]):
     kspace_train[ii, :, :, :] = kspace_train[ii, :, :, :] / np.max(np.abs(kspace_train[ii, :, :, :][:]))
 
 print('\n size of kspace: ', kspace_train.shape, ', maps: ', sens_maps.shape, ', mask: ', original_mask.shape)
-nSlices, *_ = kspace_train.shape
+
+nSlices, args.nrow_GLOB, args.ncol_GLOB, args.ncoil_GLOB = kspace_train.shape
 trn_mask, loss_mask = np.empty((nSlices, args.nrow_GLOB, args.ncol_GLOB), dtype=np.complex64), \
                       np.empty((nSlices, args.nrow_GLOB, args.ncol_GLOB), dtype=np.complex64)
 
@@ -71,9 +72,8 @@ ref_kspace = np.empty((nSlices, args.nrow_GLOB, args.ncol_GLOB, args.ncoil_GLOB)
 
 print('\n create training and loss masks and generate network inputs... ')
 ssdu_masker = ssdu_masks.ssdu_masks()
-for ii in tqdm(range(nSlices)):
-    if np.mod(ii, 50) == 0:
-        print('\n Iteration: ', ii)
+for ii in range(nSlices):
+    print('\n Iteration: ', ii)
 
     if args.mask_type == 'Gaussian':
         trn_mask[ii, ...], loss_mask[ii, ...] = ssdu_masker.Gaussian_selection(kspace_train[ii], original_mask,
@@ -95,7 +95,7 @@ for ii in tqdm(range(nSlices)):
 # set corresponding columns as 1 to ensure data consistency
 if args.data_opt == 'Coronal_PD':
     trn_mask[:, :, 0:17] = np.ones((nSlices, args.nrow_GLOB, 17))
-    trn_mask[:, :, 352:args.ncol_GLOB] = np.ones((nSlices, args.nrow_GLOB, 16))
+    trn_mask[:, :, args.ncol_GLOB-16:args.ncol_GLOB] = np.ones((nSlices, args.nrow_GLOB, 16))
 
 # %% Prepare the data for the training
 sens_maps = np.transpose(sens_maps, (0, 3, 1, 2))

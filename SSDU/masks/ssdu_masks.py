@@ -47,6 +47,7 @@ class ssdu_masks():
         loss_mask = np.zeros_like(input_mask)
         count = 0
 
+        pbar = tqdm(total=np.int(np.ceil(np.sum(input_mask[:]) * self.rho)))
         while count <= np.int(np.ceil(np.sum(input_mask[:]) * self.rho)):
 
             indx = np.int(np.round(np.random.normal(loc=center_kx, scale=(nrow - 1) / std_scale)))
@@ -55,6 +56,8 @@ class ssdu_masks():
             if 0 <= indx < nrow and 0 <= indy < ncol and temp_mask[indx, indy] == 1 and loss_mask[indx, indy] != 1:
                 loss_mask[indx, indy] = 1
                 count = count + 1
+                pbar.update(1)
+        pbar.close()
 
         trn_mask = input_mask - loss_mask
 

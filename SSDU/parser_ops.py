@@ -5,7 +5,7 @@ def get_parser():
     parser = argparse.ArgumentParser(description='SSDU: Self-Supervision via Data Undersampling ')
 
     # %% hyperparameters for the unrolled network
-    parser.add_argument('--acc_rate', type=int, default=4,
+    parser.add_argument('--acc_rate', type=int, default=8,
                         help='acceleration rate')
     parser.add_argument('--epochs', type=int, default=100,
                         help='number of epochs to train')
@@ -15,7 +15,7 @@ def get_parser():
                         help='batch size')
     parser.add_argument('--nb_unroll_blocks', type=int, default=10,
                         help='number of unrolled blocks')
-    parser.add_argument('--nb_res_blocks', type=int, default=15,
+    parser.add_argument('--nb_res_blocks', type=int, default=5,
                         help="number of residual blocks in ResNet")
     parser.add_argument('--CG_Iter', type=int, default=10,
                         help='number of Conjugate Gradient iterations for DC')
@@ -27,12 +27,14 @@ def get_parser():
                         help='number of rows of the slices in the dataset')
     parser.add_argument('--ncol_GLOB', type=int, default=368,
                         help='number of columns of the slices in the dataset')
-    parser.add_argument('--ncoil_GLOB', type=int, default=1,
+    parser.add_argument('--ncoil_GLOB', type=int, default=15,
                         help='number of coils of the slices in the dataset')
     parser.add_argument('--subsample_mask_type', type=str, default='equispaced',
                         help='Type of k-space subsampling mask', choices=['random', 'equispaced'])
     parser.add_argument('--center_fractions', type=float, default=[0.08],
                         help='Number of center lines to use in subsampling mask')
+    parser.add_argument('--challenge', type=str, default="singlecoil", choices=("singlecoil", "multicoil"),
+                        help='Which challenge to preprocess for, single or multi coil')
 
     # %% hyperparameters for the SSDU
     parser.add_argument('--mask_type', type=str, default='Gaussian',
