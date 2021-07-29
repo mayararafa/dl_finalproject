@@ -125,7 +125,7 @@ with tf.compat.v1.Session(config=config) as sess:
         print('\n Iteration: ', ii, 'elapsed time %f seconds' % toc)
 
 plt.figure()
-slice_num = 5
+slice_num = 1
 plt.subplot(1, 3, 1), plt.imshow(np.abs(all_ref_slices[slice_num]), cmap='gray'), plt.title('ref')
 plt.subplot(1, 3, 2), plt.imshow(np.abs(all_input_slices[slice_num]), cmap='gray'), plt.title('input')
 plt.subplot(1, 3, 3), plt.imshow(np.abs(all_recon_slices[slice_num]), cmap='gray'), plt.title('recon')

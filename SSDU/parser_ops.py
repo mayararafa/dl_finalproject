@@ -7,7 +7,7 @@ def get_parser():
     # %% hyperparameters for the unrolled network
     parser.add_argument('--acc_rate', type=int, default=4,
                         help='acceleration rate')
-    parser.add_argument('--epochs', type=int, default=100,
+    parser.add_argument('--epochs', type=int, default=10,
                         help='number of epochs to train')
     parser.add_argument('--learning_rate', type=float, default=5e-4,
                         help='learning rate')
