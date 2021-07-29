@@ -10,7 +10,6 @@ import tf_utils
 import parser_ops
 import masks.ssdu_masks as ssdu_masks
 from masks.subsample import create_mask_for_mask_type
-# from sens_map_gen.espirit import espirit
 from sens_map_gen.bart_espirit import espirit
 import UnrollNet
 
