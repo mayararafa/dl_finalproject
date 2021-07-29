@@ -1,5 +1,5 @@
 import numpy as np
-from SSDU import utils
+import utils
 from tqdm import tqdm
 
 

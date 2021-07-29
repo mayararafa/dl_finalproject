@@ -3,7 +3,7 @@ import os
 from skimage.metrics import structural_similarity
 
 
-DATA_DIR = "../fastmri_data/knee"
+DATA_DIR = r"C:\Users\edwar\Documents\GitHub\dl_finalproject\fastmri_data\knee"
 
 
 def get_train_directory(args):
@@ -20,7 +20,7 @@ def get_train_directory(args):
 
     if args.data_opt == 'Coronal_PD':
 
-        kspace_dir = os.path.join(DATA_DIR, "singlecoil_train/file1001061.h5")
+        kspace_dir = os.path.join(DATA_DIR, "singlecoil_challenge\\file1000164_sub.h5")
         coil_dir = '...'
 
     elif args.data_opt == 'Coronal_PDFS':
@@ -52,7 +52,7 @@ def get_test_directory(args):
     """
     if args.data_opt == 'Coronal_PD':
 
-        kspace_dir = os.path.join(DATA_DIR, "singlecoil_test")
+        kspace_dir = os.path.join(DATA_DIR, "singlecoil_challenge/file1000164_sub2.h5")
         coil_dir = '...'
         saved_model_dir = 'saved_models/SSDU_Coronal_PD_100Epochs_Rate4_10Unrolls_GaussianSelection'
 

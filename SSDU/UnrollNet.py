@@ -2,6 +2,7 @@ import tensorflow as tf
 import data_consistency as ssdu_dc
 import tf_utils
 import models.networks as networks
+import models.fb_unet as unet
 import parser_ops
 
 parser = parser_ops.get_parser()
@@ -52,7 +53,7 @@ class UnrolledNet:
         with tf.name_scope('SSDUModel'):
             with tf.compat.v1.variable_scope('Weights', reuse=tf.compat.v1.AUTO_REUSE):
                 for i in range(args.nb_unroll_blocks):
-                    x = networks.ResNet(x, args.nb_res_blocks)
+                    x = unet.U_net(x, args.nb_res_blocks)
                     denoiser_output = x
 
                     mu = networks.mu_param()

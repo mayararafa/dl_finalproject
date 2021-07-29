@@ -7,6 +7,8 @@ import h5py as h5
 import time
 import utils
 import parser_ops
+from masks.subsample import create_mask_for_mask_type
+from sens_map_gen.espirit import espirit
 
 parser = parser_ops.get_parser()
 args = parser.parse_args()
@@ -22,8 +24,18 @@ kspace_dir, coil_dir, mask_dir, saved_model_dir = utils.get_test_directory(args)
 # %% kspace and sensitivity maps are assumed to be in .h5 format and mask is assumed to be in .mat
 # Users can change these formats based on their dataset
 kspace_test = h5.File(kspace_dir, "r")['kspace'][:]
-sens_maps_testAll = h5.File(coil_dir, "r")['sens_maps'][:]
-original_mask = sio.loadmat(mask_dir)['mask']
+
+if len(kspace_test.shape) == 4:
+    # multi-coil case
+    # TODO: Need to verify input shape aligns with espirit
+    sens_maps = espirit(kspace_test, 6, 24, 0.02, 0.95)
+else:
+    # single-coil case, no need for sensitivity maps, resize to include num_coils=1
+    kspace_test = np.resize(kspace_test, (kspace_test.shape[0],) + (args.nrow_GLOB, args.ncol_GLOB, 1))
+    sens_maps_testAll = np.ones(kspace_test.shape)
+original_mask_func = create_mask_for_mask_type(args.subsample_mask_type, args.center_fractions, [args.acc_rate])
+original_mask = original_mask_func(kspace_test.shape[-3:-1], seed=42)
+
 
 print('\n Normalize kspace to 0-1 region')
 for ii in range(np.shape(kspace_test)[0]):
