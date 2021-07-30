@@ -17,7 +17,14 @@ def conv2d(input_tensor, conv_filter, name, strides=(1, 1), padding="SAME"):
     x = tf.nn.conv2d(input_tensor, W, strides=strides, padding=padding, name=name)
     return tf.nn.relu(x)
 
+
+def max_pool(x):
+    return tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 1, 1, 1], padding='SAME')
+
+
 def U_net(X, nb_res_blocks):
+
+    #[filter_height, filter_width, in_channels, out_channels]
     conv_filters = dict([('Y0', (1, 1, 2, 32)), 
     ('Y2', (3, 3, 32, 64)), 
     ('Y3', (3, 3, 64, 128))])
@@ -28,12 +35,15 @@ def U_net(X, nb_res_blocks):
 
     with tf.compat.v1.variable_scope('conv1'):
         net = conv2d(X, conv_filters["Y0"], "Y0") #128
-    
+        net = max_pool(net)
+
     with tf.compat.v1.variable_scope('conv2'):
-        net = conv2d(net, conv_filters["Y2"], "Y2", strides=(2, 2)) #64
+        net = conv2d(net, conv_filters["Y2"], "Y2", strides=(1, 1)) #64
+        net = max_pool(net)
 
     with tf.compat.v1.variable_scope('conv3'):
-        net = conv2d(net, conv_filters["Y3"], "Y3", strides=(2, 2)) #32
+        net = conv2d(net, conv_filters["Y3"], "Y3", strides=(1, 1)) #32
+        net = max_pool(net)
 
     with tf.compat.v1.variable_scope('deconv1'):
         net = deconv2d(net, 1, 160, 92, 128, 128, "Y2_deconv") # 32
