@@ -17,10 +17,8 @@ def conv2d(input_tensor, conv_filter, name, strides=(1, 1), padding="SAME"):
     x = tf.nn.conv2d(input_tensor, W, strides=strides, padding=padding, name=name)
     return tf.nn.relu(x)
 
-
 def max_pool(x):
     return tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 1, 1, 1], padding='SAME')
-
 
 def U_net(X, nb_res_blocks):
 

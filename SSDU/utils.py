@@ -23,7 +23,7 @@ def get_train_directory(args):
         if args.challenge == "singlecoil":
             kspace_dir = os.path.join(DATA_DIR, "singlecoil_challenge\\file1000164_sub.h5")
         else:
-            kspace_dir = os.path.join(DATA_DIR, "multicoil_train/file1001067.h5")
+            kspace_dir = os.path.join(DATA_DIR, "TDB___multicoil_train/file1001067.h5")
 
         coil_dir = '...'
 
@@ -59,7 +59,7 @@ def get_test_directory(args):
         if args.challenge == "singlecoil":
             kspace_dir = os.path.join(DATA_DIR, "singlecoil_challenge/file1000164_sub2.h5")
         else:
-            kspace_dir = os.path.join(DATA_DIR, "multicoil_test/file1001476_v2.h5")
+            kspace_dir = os.path.join(DATA_DIR, "TBD__multicoil_test/file1001476_v2.h5")
         coil_dir = '...'
         saved_model_dir = 'saved_models/MY_SSDU_Coronal_PD_10Epochs_Rate4_10Unrolls_GaussianSelection'
 
