@@ -147,5 +147,7 @@ slice_num = 20
 plt.subplot(1, 3, 1), plt.imshow(np.abs(all_ref_slices[slice_num]), cmap='gray'), plt.title('ref')
 plt.subplot(1, 3, 2), plt.imshow(np.abs(all_input_slices[slice_num]), cmap='gray'), plt.title('input')
 plt.subplot(1, 3, 3), plt.imshow(np.abs(all_recon_slices[slice_num]), cmap='gray'), plt.title('recon')
+save_plt_fname = "{}_{}.png".format(args.challenge, kspace_dir.split('/')[-1].split('.')[0])
+plt.savefig(os.path.join(saved_model_dir, save_plt_fname))
 plt.show()
 print("PSNR = {}, SSIM = {}".format(all_psnr[slice_num], all_ssim[slice_num]))
