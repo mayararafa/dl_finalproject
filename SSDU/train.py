@@ -1,3 +1,5 @@
+import sys
+
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import scipy.io as sio
@@ -194,6 +196,16 @@ with tf.compat.v1.Session(config=config) as sess:
 
         except tf.errors.OutOfRangeError:
             pass
+        except KeyboardInterrupt:
+            end_time = time.time()
+            print('Training interrupted after', ((end_time - start_time) / 60), ' minutes')
+            epochs_completed = len(totalLoss)
+            plt.scatter(np.linspace(1, epochs_completed, epochs_completed), totalLoss)
+            plt.xlabel("Epochs")
+            plt.ylabel("Training Loss")
+            plt.savefig(os.path.join(directory, "train_loss_plot.png"))
+            plt.show()
+            sys.exit()
 
         if np.mod(ep, 10) == 0:
             saver.save(sess, sess_trn_filename, global_step=ep)
