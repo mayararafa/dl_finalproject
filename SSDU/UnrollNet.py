@@ -53,8 +53,10 @@ class UnrolledNet:
         with tf.name_scope('SSDUModel'):
             with tf.compat.v1.variable_scope('Weights', reuse=tf.compat.v1.AUTO_REUSE):
                 for i in range(args.nb_unroll_blocks):
-                    # x = networks.ResNet(x, args.nb_res_blocks)
-                    x = unet(x, 2, 32, args.num_pool_layers, 0.2)
+                    if args.reg_model == "resnet":
+                        x = networks.ResNet(x, args.nb_res_blocks)
+                    else:
+                        x = unet(x, 2, 32, args.num_pool_layers, args.drop_prob)
                     denoiser_output = x
 
                     mu = networks.mu_param()

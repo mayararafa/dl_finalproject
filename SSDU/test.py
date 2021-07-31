@@ -7,6 +7,8 @@ import h5py as h5
 import time
 import utils
 import parser_ops
+from masks.subsample import create_mask_for_mask_type
+from sens_map_gen.bart_espirit import espirit
 
 parser = parser_ops.get_parser()
 args = parser.parse_args()
@@ -19,11 +21,30 @@ args.data_opt = "Coronal_PD"
 print('\n Loading ' + args.data_opt + ' test dataset...')
 kspace_dir, coil_dir, mask_dir, saved_model_dir = utils.get_test_directory(args)
 
-# %% kspace and sensitivity maps are assumed to be in .h5 format and mask is assumed to be in .mat
-# Users can change these formats based on their dataset
-kspace_test = h5.File(kspace_dir, "r")['kspace'][:]
-sens_maps_testAll = h5.File(coil_dir, "r")['sens_maps'][:]
-original_mask = sio.loadmat(mask_dir)['mask']
+# Read in data
+# fastMRI data -> (num_slices, num_coils, h, w)
+kspace_test = h5.File(kspace_dir, "r")['kspace']
+if args.challenge == "singlecoil":
+    kspace_test = np.resize(kspace_test, (kspace_test.shape[0],) + (1,) + kspace_test.shape[1:])
+
+# Crop kspace (h, w) to (args.nrow_GLOB, args.ncol_GLOB)
+crop_h = (kspace_test.shape[2] - args.nrow_GLOB) // 2
+crop_w = (kspace_test.shape[3] - args.ncol_GLOB) // 2
+if crop_h != 0 and crop_w != 0:
+    kspace_test = kspace_test[:, :, crop_h:-crop_h, crop_w:-crop_w]
+elif crop_w == 0:
+    kspace_test = kspace_test[:, :, crop_h:-crop_h, :]
+elif crop_h == 0:
+    kspace_test = kspace_test[:, :, :, crop_w:-crop_w]
+
+# Reshaped to (num_slices, h, w, num_coils)
+kspace_test = np.transpose(kspace_test, (0, 2, 3, 1))
+
+print("\nGenerating sensitivity maps - num_slices={} ...".format(kspace_test.shape[0]))
+sens_maps_testAll = espirit(args, kspace_test, 6, 24, 0.02, 0.95)
+
+original_mask_func = create_mask_for_mask_type(args.subsample_mask_type, args.center_fractions, [args.acc_rate])
+original_mask = original_mask_func(kspace_test.shape[-3:-1], seed=42)  # (h, w)
 
 print('\n Normalize kspace to 0-1 region')
 for ii in range(np.shape(kspace_test)[0]):
@@ -40,7 +61,7 @@ print('\n size of kspace: ', kspace_test.shape, ', maps: ', sens_maps_testAll.sh
 # set corresponding columns as 1 to ensure data consistency
 if args.data_opt == 'Coronal_PD':
     test_mask[:, :, 0:17] = np.ones((nSlices, args.nrow_GLOB, 17))
-    test_mask[:, :, 352:args.ncol_GLOB] = np.ones((nSlices, args.nrow_GLOB, 16))
+    test_mask[:, :, args.ncol_GLOB-16:args.ncol_GLOB] = np.ones((nSlices, args.nrow_GLOB, 16))
 
 test_refAll = np.empty((nSlices, args.nrow_GLOB, args.ncol_GLOB), dtype=np.complex64)
 test_inputAll = np.empty((nSlices, args.nrow_GLOB, args.ncol_GLOB), dtype=np.complex64)

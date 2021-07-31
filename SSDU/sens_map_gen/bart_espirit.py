@@ -28,7 +28,7 @@ def espirit(args, kspace, k, r, t, c):
         sens_map = bart(1, f"ecalib -m1 -d0 -k{k} -r{r} -t{t} -c{c}", kspace_slice)
 
         sens_map = np.squeeze(sens_map)
-        if args.challenge == "singlecoil":
+        if args.challenge == "singlecoil" or args.ncoil_GLOB == 1:
             sens_map = np.expand_dims(sens_map, -1)
 
         sens_maps[idx] = sens_map
