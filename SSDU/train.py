@@ -47,6 +47,12 @@ kspace_dir, coil_dir, mask_dir = utils.get_train_directory(args)
 kspace_train = h5.File(kspace_dir, "r")['kspace'][:1, :]
 if args.challenge == "singlecoil":
     kspace_train = np.resize(kspace_train, (kspace_train.shape[0],) + (1,) + kspace_train.shape[1:])
+
+# Crop kspace (h, w) to (320, 320) ...
+crop_h = (kspace_train.shape[2] - 320) // 2
+crop_w = (kspace_train.shape[3] - 320) // 2
+kspace_train = kspace_train[:, :, crop_h:-crop_h, crop_w:-crop_w]
+
 # Reshaped to (num_slices, h, w, num_coils)
 kspace_train = np.transpose(kspace_train, (0, 2, 3, 1))
 

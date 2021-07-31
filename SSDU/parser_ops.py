@@ -19,22 +19,24 @@ def get_parser():
                         help="number of residual blocks in ResNet")
     parser.add_argument('--CG_Iter', type=int, default=10,
                         help='number of Conjugate Gradient iterations for DC')
+    parser.add_argument('--num_pool_layers', type=int, default=4,
+                        help='number of U-Net pooling layers')
 
     # %% hyperparameters for the dataset
     parser.add_argument('--data_opt', type=str, default='Coronal_PD',
                         help=' directories for the kspace, sensitivity maps and mask')
-    parser.add_argument('--nrow_GLOB', type=int, default=640,
+    parser.add_argument('--nrow_GLOB', type=int, default=320,
                         help='number of rows of the slices in the dataset')
-    parser.add_argument('--ncol_GLOB', type=int, default=368,
+    parser.add_argument('--ncol_GLOB', type=int, default=320,
                         help='number of columns of the slices in the dataset')
     parser.add_argument('--ncoil_GLOB', type=int, default=15,
                         help='number of coils of the slices in the dataset')
     parser.add_argument('--subsample_mask_type', type=str, default='equispaced',
-                        help='Type of k-space subsampling mask', choices=['random', 'equispaced'])
+                        help='type of k-space subsampling mask', choices=['random', 'equispaced'])
     parser.add_argument('--center_fractions', type=float, default=[0.08],
-                        help='Number of center lines to use in subsampling mask')
+                        help='number of center lines to use in subsampling mask')
     parser.add_argument('--challenge', type=str, default="singlecoil", choices=("singlecoil", "multicoil"),
-                        help='Which challenge to preprocess for, single or multi coil')
+                        help='which challenge to preprocess for, single or multi coil')
 
     # %% hyperparameters for the SSDU
     parser.add_argument('--mask_type', type=str, default='Gaussian',
