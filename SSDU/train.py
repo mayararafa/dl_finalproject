@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import tensorflow as tf
 import scipy.io as sio
 import numpy as np
@@ -201,3 +202,8 @@ with tf.compat.v1.Session(config=config) as sess:
 end_time = time.time()
 sio.savemat(os.path.join(directory, 'TrainingLog.mat'), {'loss': totalLoss})
 print('Training completed in  ', ((end_time - start_time) / 60), ' minutes')
+plt.scatter(np.linspace(1, args.epochs, args.epochs), totalLoss)
+plt.xlabel("Epochs")
+plt.ylabel("Training Loss")
+plt.savefig(os.path.join(directory, "train_loss_plot.png"))
+plt.show()
