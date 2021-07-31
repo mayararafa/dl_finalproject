@@ -50,7 +50,7 @@ if __name__ == "__main__":
         npz_fname = "{}_{}.npz".format(args.challenge, kspace_dir.split('/')[-1].split('.')[0])
 
         # fastMRI data -> (num_slices, num_coils, h, w)
-        kspace_train = h5.File(kspace_dir, "r")['kspace']
+        kspace_train = h5.File(kspace_dir, "r")['kspace'][:20]
         if args.challenge == "singlecoil":
             kspace_train = np.resize(kspace_train, (kspace_train.shape[0],) + (1,) + kspace_train.shape[1:])
             args.ncoil_GLOB = 1

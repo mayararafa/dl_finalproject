@@ -9,7 +9,7 @@ def get_parser():
                         help='acceleration rate')
     parser.add_argument('--epochs', type=int, default=100,
                         help='number of epochs to train')
-    parser.add_argument('--learning_rate', type=float, default=1e-3,
+    parser.add_argument('--learning_rate', type=float, default=1e-4,
                         help='learning rate')
     parser.add_argument('--batchSize', type=int, default=1,
                         help='batch size')
@@ -37,7 +37,7 @@ def get_parser():
                         help='number of rows of the slices in the dataset')
     parser.add_argument('--ncol_GLOB', type=int, default=368,
                         help='number of columns of the slices in the dataset')
-    parser.add_argument('--ncoil_GLOB', type=int, default=15,
+    parser.add_argument('--ncoil_GLOB', type=int, default=1,
                         help='number of coils of the slices in the dataset')
     parser.add_argument('--subsample_mask_type', type=str, default='equispaced',
                         help='type of k-space subsampling mask', choices=['random', 'equispaced'])

@@ -66,7 +66,7 @@ print('\n size of kspace: ', kspace_test.shape, ', maps: ', sens_maps_testAll.sh
 # set corresponding columns as 1 to ensure data consistency
 if args.data_opt == 'Coronal_PD':
     test_mask[:, :, 0:17] = np.ones((nSlices, args.nrow_GLOB, 17))
-    test_mask[:, :, args.ncol_GLOB-16:args.ncol_GLOB] = np.ones((nSlices, args.nrow_GLOB, 16))
+    test_mask[:, :, args.ncol_GLOB - 16:args.ncol_GLOB] = np.ones((nSlices, args.nrow_GLOB, 16))
 
 test_refAll = np.empty((nSlices, args.nrow_GLOB, args.ncol_GLOB), dtype=np.complex64)
 test_inputAll = np.empty((nSlices, args.nrow_GLOB, args.ncol_GLOB), dtype=np.complex64)
@@ -79,7 +79,7 @@ for ii in range(nSlices):
 
 sens_maps_testAll = np.transpose(sens_maps_testAll, (0, 3, 1, 2))
 all_ref_slices, all_input_slices, all_recon_slices = [], [], []
-all_psnr, all_ssim = [], []
+all_psnr, all_ssim, all_nmse = [], [], []
 
 print('\n  loading the saved model ...')
 tf.compat.v1.reset_default_graph()
@@ -116,7 +116,8 @@ with tf.compat.v1.Session(config=config) as sess:
 
         tic = time.time()
         dataDict = {nw_inputP: nw_input_test, trn_maskP: testMask, loss_maskP: testMask, sens_mapsP: sens_maps_test}
-        nw_output_ssdu, *_ = sess.run([nw_output, nw_kspace_output, x0_output, all_intermediate_outputs, mu_param], feed_dict=dataDict)
+        nw_output_ssdu, *_ = sess.run([nw_output, nw_kspace_output, x0_output, all_intermediate_outputs, mu_param],
+                                      feed_dict=dataDict)
         toc = time.time() - tic
         ref_image_test = utils.real2complex(ref_image_test.squeeze())
         nw_input_test = utils.real2complex(nw_input_test.squeeze())
@@ -139,6 +140,7 @@ with tf.compat.v1.Session(config=config) as sess:
 
         all_psnr.append(utils.getPSNR(ref_image_test, nw_output_ssdu))
         all_ssim.append(utils.getSSIM(ref_image_test, nw_output_ssdu))
+        all_nmse.append(utils.getNMSE(ref_image_test, nw_output_ssdu))
 
         # print('\n Iteration: ', ii, 'elapsed time %f seconds' % toc)
 
@@ -150,4 +152,7 @@ plt.subplot(1, 3, 3), plt.imshow(np.abs(all_recon_slices[slice_num]), cmap='gray
 save_plt_fname = "{}_{}.png".format(args.challenge, kspace_dir.split('/')[-1].split('.')[0])
 plt.savefig(os.path.join(saved_model_dir, save_plt_fname))
 plt.show()
-print("PSNR = {}, SSIM = {}".format(all_psnr[slice_num], all_ssim[slice_num]))
+print("Slice {} Metrics: PSNR = {}, SSIM = {}, NMSE = {}".format(slice_num, all_psnr[slice_num],
+                                                                 all_ssim[slice_num], all_nmse[slice_num]))
+print("Avg over all slices: PSNR = {}, SSIM = {}, NMSE = {}".format(np.average(all_psnr), np.average(all_ssim),
+                                                                    np.average(all_nmse)))

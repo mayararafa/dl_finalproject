@@ -22,7 +22,7 @@ def get_train_directory(args):
         if args.challenge == "singlecoil":
             kspace_dir = os.path.join(DATA_DIR, "singlecoil_train/file1001572.h5")
         else:
-            kspace_dir = os.path.join(DATA_DIR, "multicoil_train/file1001067.h5")
+            kspace_dir = os.path.join(DATA_DIR, "multicoil_challenge/file1000072.h5")
         coil_dir = '...'
 
     elif args.data_opt == 'Coronal_PDFS':
@@ -79,6 +79,7 @@ def get_test_directory(args):
 
 def getSSIM(space_ref, space_rec):
     """
+    Structural Similarity Index Metric (SSIM)
     Measures SSIM between the reference and the reconstructed images
     """
 
@@ -95,6 +96,7 @@ def getSSIM(space_ref, space_rec):
 
 def getPSNR(ref, recon):
     """
+    Peak Signal to Noise Ratio metric (PSNR)
     Measures PSNR between the reference and the reconstructed images
     """
 
@@ -102,6 +104,11 @@ def getPSNR(ref, recon):
     psnr = 20 * np.log10(np.abs(ref.max()) / (np.sqrt(mse) + 1e-10))
 
     return psnr
+
+
+def getNMSE(ref, recon):
+    """Compute Normalized Mean Squared Error (NMSE)"""
+    return np.linalg.norm(ref - recon) ** 2 / np.linalg.norm(ref) ** 2
 
 
 def fft(ispace, axes=(0, 1), norm=None, unitary_opt=True):

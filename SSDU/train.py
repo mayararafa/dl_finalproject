@@ -1,5 +1,4 @@
 import sys
-
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import scipy.io as sio
@@ -47,7 +46,8 @@ config.allow_soft_placement = True
 print('\n Loading ', args.data_opt, ' data, acc rate : ', args.acc_rate, ', mask type :', args.mask_type)
 kspace_dir, coil_dir, mask_dir = utils.get_train_directory(args)
 
-npz_dir = "/home/mayararafa/dl_finalproject/SSDU/data"
+data_dir = "/".join(kspace_dir.split("/")[:-1])
+npz_dir = "/home/mayararafa/dl_finalproject/SSDU/data/{}".format(data_dir.split("/")[-1])
 if not os.path.exists(npz_dir):
     os.mkdir(npz_dir)
 npz_fname = "{}_{}.npz".format(args.challenge, kspace_dir.split('/')[-1].split('.')[0])
@@ -63,7 +63,7 @@ if os.path.exists(os.path.join(npz_dir, npz_fname)):
     loss_mask = data["loss_mask"]
 else:
     # fastMRI data -> (num_slices, num_coils, h, w)
-    kspace_train = h5.File(kspace_dir, "r")['kspace'][:1, :]
+    kspace_train = h5.File(kspace_dir, "r")['kspace'][:20]
     if args.challenge == "singlecoil":
         kspace_train = np.resize(kspace_train, (kspace_train.shape[0],) + (1,) + kspace_train.shape[1:])
         args.ncoil_GLOB = 1
