@@ -9,6 +9,8 @@ import utils
 import parser_ops
 from masks.subsample import create_mask_for_mask_type
 from sens_map_gen.bart_espirit import espirit
+from data import slice_coil
+from tqdm import tqdm
 
 parser = parser_ops.get_parser()
 args = parser.parse_args()
@@ -39,6 +41,9 @@ elif crop_h == 0:
 
 # Reshaped to (num_slices, h, w, num_coils)
 kspace_test = np.transpose(kspace_test, (0, 2, 3, 1))
+
+# Slice coil data
+kspace_test = slice_coil(kspace_test, args)
 
 print("\nGenerating sensitivity maps - num_slices={} ...".format(kspace_test.shape[0]))
 sens_maps_testAll = espirit(args, kspace_test, 6, 24, 0.02, 0.95)
@@ -74,6 +79,7 @@ for ii in range(nSlices):
 
 sens_maps_testAll = np.transpose(sens_maps_testAll, (0, 3, 1, 2))
 all_ref_slices, all_input_slices, all_recon_slices = [], [], []
+all_psnr, all_ssim = [], []
 
 print('\n  loading the saved model ...')
 tf.compat.v1.reset_default_graph()
@@ -100,7 +106,7 @@ with tf.compat.v1.Session(config=config) as sess:
     sens_mapsP = graph.get_tensor_by_name('sens_maps:0')
     weights = sess.run(tf.compat.v1.global_variables())
 
-    for ii in range(nSlices):
+    for ii in tqdm(range(nSlices), desc="Iteration"):
 
         ref_image_test = np.copy(test_refAll[ii, :, :])[np.newaxis]
         nw_input_test = np.copy(test_inputAll[ii, :, :])[np.newaxis]
@@ -131,11 +137,15 @@ with tf.compat.v1.Session(config=config) as sess:
         all_ref_slices.append(ref_image_test)
         all_input_slices.append(nw_input_test)
 
-        print('\n Iteration: ', ii, 'elapsed time %f seconds' % toc)
+        all_psnr.append(utils.getPSNR(ref_image_test, nw_output_ssdu))
+        all_ssim.append(utils.getSSIM(ref_image_test, nw_output_ssdu))
+
+        # print('\n Iteration: ', ii, 'elapsed time %f seconds' % toc)
 
 plt.figure()
-slice_num = 5
+slice_num = 20
 plt.subplot(1, 3, 1), plt.imshow(np.abs(all_ref_slices[slice_num]), cmap='gray'), plt.title('ref')
 plt.subplot(1, 3, 2), plt.imshow(np.abs(all_input_slices[slice_num]), cmap='gray'), plt.title('input')
 plt.subplot(1, 3, 3), plt.imshow(np.abs(all_recon_slices[slice_num]), cmap='gray'), plt.title('recon')
 plt.show()
+print("PSNR = {}, SSIM = {}".format(all_psnr[slice_num], all_ssim[slice_num]))

@@ -35,9 +35,9 @@ def get_parser():
                         help=' directories for the kspace, sensitivity maps and mask')
     parser.add_argument('--nrow_GLOB', type=int, default=320,
                         help='number of rows of the slices in the dataset')
-    parser.add_argument('--ncol_GLOB', type=int, default=320,
+    parser.add_argument('--ncol_GLOB', type=int, default=368,
                         help='number of columns of the slices in the dataset')
-    parser.add_argument('--ncoil_GLOB', type=int, default=1,
+    parser.add_argument('--ncoil_GLOB', type=int, default=15,
                         help='number of coils of the slices in the dataset')
     parser.add_argument('--subsample_mask_type', type=str, default='equispaced',
                         help='type of k-space subsampling mask', choices=['random', 'equispaced'])
