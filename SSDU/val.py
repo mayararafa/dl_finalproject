@@ -98,8 +98,9 @@ all_psnr, all_ssim, all_nmse = [], [], []
 config = tf.compat.v1.ConfigProto()
 config.gpu_options.allow_growth = True
 best_nmse, best_psnr, best_ssim = 1, 0, 0
+psnr_per_epoch, ssim_per_epoch, nmse_per_epoch = [], [], []
 best_epoch = None
-for epoch in np.linspace(10, 100, 10, dtype=np.int):
+for epoch in np.linspace(10, 20, 2, dtype=np.int):
     print('\n  loading the saved model-{} ...'.format(epoch))
     tf.compat.v1.reset_default_graph()
     loadChkPoint = os.path.join(saved_model_dir, "model-{}".format(epoch))
@@ -161,6 +162,9 @@ for epoch in np.linspace(10, 100, 10, dtype=np.int):
 
             # print('\n Iteration: ', ii, 'elapsed time %f seconds' % toc)
 
+    psnr_per_epoch.append(np.nanmean(all_psnr))
+    ssim_per_epoch.append(np.nanmean(all_ssim))
+    nmse_per_epoch.append(np.nanmean(all_nmse))
     if np.nanmean(all_nmse) < best_nmse:
         best_nmse = np.nanmean(all_nmse)
         best_psnr = np.nanmean(all_psnr)
@@ -182,3 +186,12 @@ for epoch in np.linspace(10, 100, 10, dtype=np.int):
 
 print("\nBest Epoch: ", best_epoch)
 print("PSNR={}, SSIM={}, NMSE={}".format(best_psnr, best_ssim, best_ssim))
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.scatter(np.linspace(10, 20, 2), psnr_per_epoch, c='b', label='PSNR')
+ax.scatter(np.linspace(10, 20, 2), ssim_per_epoch, c='r', label='SSIM')
+ax.scatter(np.linspace(10, 20, 2), nmse_per_epoch, c='g', label='NMSE')
+plt.legend(bbox_to_anchor=(1.04, 1))
+plt.savefig(os.path.join(saved_model_dir, "metrics_per_epoch_plot.png"))
+plt.show()
