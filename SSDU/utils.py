@@ -22,7 +22,7 @@ def get_train_directory(args):
         if args.challenge == "singlecoil":
             kspace_dir = os.path.join(DATA_DIR, "singlecoil_train/file1001572.h5")
         else:
-            kspace_dir = os.path.join(DATA_DIR, "multicoil_challenge/file1000072.h5")
+            kspace_dir = os.path.join(DATA_DIR, "multicoil_challenge/file1001766.h5")
         coil_dir = '...'
 
     elif args.data_opt == 'Coronal_PDFS':
@@ -56,7 +56,7 @@ def get_test_directory(args):
         if args.challenge == "singlecoil":
             kspace_dir = os.path.join(DATA_DIR, "singlecoil_test/file1001072_v2.h5")
         else:
-            kspace_dir = os.path.join(DATA_DIR, "multicoil_test/file1001476_v2.h5")
+            kspace_dir = os.path.join(DATA_DIR, "multicoil_test/file1000110_v2.h5")
         coil_dir = '...'
         saved_model_dir = 'saved_models/SSDU_Coronal_PD_100Epochs_Rate4_10Unrolls_GaussianSelection'
 

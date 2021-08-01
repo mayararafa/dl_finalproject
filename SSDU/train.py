@@ -24,9 +24,10 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 save_dir = 'saved_models'
 directory = os.path.join(save_dir,
-                         'MY_SSDU_' + args.data_opt + '_' + str(args.epochs) + 'Epochs_Rate' + str(args.acc_rate) +
-                         '_' + str(args.nb_unroll_blocks) + 'Unrolls_' + args.mask_type + 'Selection_' +
-                         args.reg_model + "Model_" + str(args.nrow_GLOB) + "x" + str(args.ncol_GLOB) + "InputSize")
+                         'MY_SSDU_' + args.data_opt + '_' + str(args.epochs) + 'Epochs_' + str(args.acc_rate) +
+                         'AccRate_' + str(args.nb_unroll_blocks) + 'Unrolls_' + args.mask_type + 'Selection_' +
+                         args.reg_model + "Model_" + str(args.num_pool_layers) + "NumPoolLayers_" +
+                         str(args.nrow_GLOB) + "x" + str(args.ncol_GLOB) + "InputSize")
 
 if not os.path.exists(directory):
     os.makedirs(directory)

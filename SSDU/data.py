@@ -35,7 +35,7 @@ if __name__ == "__main__":
     os.environ["HDF5_USE_FILE_LOCKING"] = "FALSE"
 
     print('\n Loading ', args.data_opt, ' data, acc rate : ', args.acc_rate, ', mask type :', args.mask_type)
-    kspace_dir, coil_dir, mask_dir = utils.get_train_directory(args)
+    kspace_dir, *_ = utils.get_train_directory(args)
 
     data_dir = "/".join(kspace_dir.split("/")[:-1])
     fnames = os.listdir(data_dir)
