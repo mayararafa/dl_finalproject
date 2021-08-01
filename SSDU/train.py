@@ -22,7 +22,7 @@ args = parser.parse_args()
 os.environ["HDF5_USE_FILE_LOCKING"] = "FALSE"
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-save_dir = 'saved_models'
+save_dir = 'SSDU/saved_models'
 directory = os.path.join(save_dir,
                          'MY_SSDU_' + args.data_opt + '_' + str(args.epochs) + 'Epochs_' + str(args.acc_rate) +
                          'AccRate_' + str(args.nb_unroll_blocks) + 'Unrolls_' + args.mask_type + 'Selection_' +
