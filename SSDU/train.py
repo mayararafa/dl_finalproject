@@ -48,7 +48,7 @@ print('\n Loading ', args.data_opt, ' data, acc rate : ', args.acc_rate, ', mask
 kspace_dir, coil_dir, mask_dir = utils.get_train_directory(args)
 
 data_dir = "/".join(kspace_dir.split("/")[:-1])
-npz_dir = "/home/mayararafa/dl_finalproject/SSDU/data/{}".format(data_dir.split("/")[-1])
+npz_dir = "data/{}".format(data_dir.split("/")[-1])
 if not os.path.exists(npz_dir):
     os.mkdir(npz_dir)
 npz_fname = "{}_{}.npz".format(args.challenge, kspace_dir.split('/')[-1].split('.')[0])

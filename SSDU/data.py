@@ -40,10 +40,11 @@ if __name__ == "__main__":
     data_dir = "/".join(kspace_dir.split("/")[:-1])
     fnames = os.listdir(data_dir)
 
-    npz_dir = "/home/mayararafa/dl_finalproject/SSDU/data/{}".format(data_dir.split("/")[-1])
+    npz_dir = "data/{}".format(data_dir.split("/")[-1])
     if not os.path.exists(npz_dir):
         os.mkdir(npz_dir)
 
+    fnames = ["file1001067.h5"]
     for fname in fnames:
         kspace_dir = os.path.join(data_dir, fname)
 

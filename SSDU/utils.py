@@ -22,7 +22,7 @@ def get_train_directory(args):
         if args.challenge == "singlecoil":
             kspace_dir = os.path.join(DATA_DIR, "singlecoil_train/file1001572.h5")
         else:
-            kspace_dir = os.path.join(DATA_DIR, "multicoil_challenge/file1001766.h5")
+            kspace_dir = os.path.join(DATA_DIR, "multicoil_train/file1001067.h5")
         coil_dir = '...'
 
     elif args.data_opt == 'Coronal_PDFS':
