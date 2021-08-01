@@ -172,7 +172,7 @@ for epoch in np.linspace(10, 100, 10, dtype=np.int):
         best_epoch = epoch
 
     plt.figure()
-    slice_num = np.nanargmax(all_psnr)
+    slice_num = 20
     plt.subplot(1, 3, 1), plt.imshow(np.abs(all_ref_slices[slice_num]), cmap='gray'), plt.title('ref')
     plt.subplot(1, 3, 2), plt.imshow(np.abs(all_input_slices[slice_num]), cmap='gray'), plt.title('input')
     plt.subplot(1, 3, 3), plt.imshow(np.abs(all_recon_slices[slice_num]), cmap='gray'), plt.title('recon')
