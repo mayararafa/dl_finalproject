@@ -51,7 +51,7 @@ data_dir = "/".join(kspace_dir.split("/")[:-1])
 npz_dir = "data/{}".format(data_dir.split("/")[-1])
 if not os.path.exists(npz_dir):
     os.mkdir(npz_dir)
-npz_fname = "{}_{}.npz".format(args.challenge, kspace_dir.split('/')[-1].split('.')[0])
+npz_fname = "{}_{}_acc{}.npz".format(args.challenge, kspace_dir.split('/')[-1].split('.')[0], args.acc_rate)
 
 # Read in data
 if os.path.exists(os.path.join(npz_dir, npz_fname)):

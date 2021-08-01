@@ -48,7 +48,7 @@ if __name__ == "__main__":
     for fname in fnames:
         kspace_dir = os.path.join(data_dir, fname)
 
-        npz_fname = "{}_{}.npz".format(args.challenge, kspace_dir.split('/')[-1].split('.')[0])
+        npz_fname = "{}_{}_acc{}.npz".format(args.challenge, kspace_dir.split('/')[-1].split('.')[0], args.acc_rate)
 
         # fastMRI data -> (num_slices, num_coils, h, w)
         kspace_train = h5.File(kspace_dir, "r")['kspace'][:20]
