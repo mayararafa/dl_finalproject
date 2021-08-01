@@ -40,7 +40,7 @@ if __name__ == "__main__":
     data_dir = "/".join(kspace_dir.split("/")[:-1])
     fnames = os.listdir(data_dir)
 
-    npz_dir = "data/{}".format(data_dir.split("/")[-1])
+    npz_dir = "SSDU/data/{}".format(data_dir.split("/")[-1])
     if not os.path.exists(npz_dir):
         os.mkdir(npz_dir)
 

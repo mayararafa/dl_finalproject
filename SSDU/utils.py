@@ -3,7 +3,7 @@ import os
 from skimage.metrics import structural_similarity
 
 
-DATA_DIR = "../fastmri_data/knee"
+DATA_DIR = "fastmri_data/knee"
 
 
 def get_train_directory(args):
