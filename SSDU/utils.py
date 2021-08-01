@@ -58,7 +58,7 @@ def get_test_directory(args):
         else:
             kspace_dir = os.path.join(DATA_DIR, "multicoil_test/file1000110_v2.h5")
         coil_dir = '...'
-        saved_model_dir = 'saved_models/SSDU_Coronal_PD_100Epochs_Rate4_10Unrolls_GaussianSelection'
+        saved_model_dir = 'SSDU/saved_models/SSDU_Coronal_PD_100Epochs_Rate4_10Unrolls_GaussianSelection'
 
     elif args.data_opt == 'Coronal_PDFS':
 

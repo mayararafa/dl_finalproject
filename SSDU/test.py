@@ -45,8 +45,22 @@ kspace_test = np.transpose(kspace_test, (0, 2, 3, 1))
 # Slice coil data
 kspace_test = slice_coil(kspace_test, args)
 
-print("\nGenerating sensitivity maps - num_slices={} ...".format(kspace_test.shape[0]))
-sens_maps_testAll = espirit(args, kspace_test, 6, 24, 0.02, 0.95)
+data_dir = "/".join(kspace_dir.split("/")[:-1])
+npz_dir = "SSDU/data/{}".format(data_dir.split("/")[-1])
+if not os.path.exists(npz_dir):
+    os.mkdir(npz_dir)
+npz_fname = "{}_{}_acc{}.npz".format(args.challenge, kspace_dir.split('/')[-1].split('.')[0], args.acc_rate)
+
+if os.path.exists(os.path.join(npz_dir, npz_fname)):
+    print("\n Loading sensitivity maps")
+    data = np.load(os.path.join(npz_dir, npz_fname))
+    sens_maps_testAll = data["sens_maps_testAll"]
+else:
+    print("\nGenerating sensitivity maps - num_slices={} ...".format(kspace_test.shape[0]))
+    sens_maps_testAll = espirit(args, kspace_test, 6, 24, 0.02, 0.95)
+
+    print("\n Dumping sensitivity maps to", os.path.join(npz_dir, npz_fname))
+    np.savez(os.path.join(npz_dir, npz_fname), sens_maps_testAll=sens_maps_testAll)
 
 original_mask_func = create_mask_for_mask_type(args.subsample_mask_type, args.center_fractions, [args.acc_rate])
 original_mask = original_mask_func(kspace_test.shape[-3:-1], seed=42)  # (h, w)
@@ -154,5 +168,5 @@ plt.savefig(os.path.join(saved_model_dir, save_plt_fname))
 plt.show()
 print("Slice {} Metrics: PSNR = {}, SSIM = {}, NMSE = {}".format(slice_num, all_psnr[slice_num],
                                                                  all_ssim[slice_num], all_nmse[slice_num]))
-print("Avg over all slices: PSNR = {}, SSIM = {}, NMSE = {}".format(np.average(all_psnr), np.average(all_ssim),
-                                                                    np.average(all_nmse)))
+print("Avg over all slices: PSNR = {}, SSIM = {}, NMSE = {}".format(np.nanmean(all_psnr), np.nanmean(all_ssim),
+                                                                    np.nanmean(all_nmse)))
